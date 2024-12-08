@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta - Mercadinho Dia Feliz</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 sidebar p-0">
+                <div class="p-4 text-center">
+                    <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Foto de Perfil">
+                    <h4 id="nomeCliente">Nome do Cliente</h4>
+                    <p id="emailCliente">email@exemplo.com</p>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#pedidos" onclick="mostrarSecao('pedidos')">
+                            <i class="fas fa-shopping-cart"></i> Meus Pedidos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#perfil" onclick="mostrarSecao('perfil')">
+                            <i class="fas fa-user"></i> Meu Perfil
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <a class="nav-link text-white" href="#" id="btnSair">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Conteúdo Principal -->
+            <div class="col-md-9 p-4">
+                <div id="secaoPedidos" class="secao">
+                    <h2>Meus Pedidos</h2>
+                    <table class="table" id="tabelaPedidos">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Data</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaPedidos">
+                            <!-- Pedidos serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="secaoPerfil" class="secao" style="display:none;">
+                    <h2>Meu Perfil</h2>
+                    <form id="formPerfil">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="nomePerfil" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="emailPerfil" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">CEP</label>
+                                <input type="text" class="form-control" id="cepPerfil">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Endereço</label>
+                                <input type="text" class="form-control" id="enderecoPerfil">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Atualizar Perfil</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes do Pedido -->
+    <div class="modal fade" id="detalhesPedidoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="corpoDetalhesPedido">
+                    <!-- Detalhes do pedido serão carregados aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Verificar autenticação
+        if (!localStorage.getItem('token')) {
+            window.location.href = '/loja.html';
+        }
+
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (usuario.tipo !== 'cliente') {
+            window.location.href = '/loja.html';
+        }
+
+        // Preencher informações do usuário
+        document.getElementById('nomeCliente').textContent = usuario.nome;
+        document.getElementById('emailCliente').textContent = usuario.email;
+        document.getElementById('nomePerfil').value = usuario.nome;
+        document.getElementById('emailPerfil').value = usuario.email;
+
+        // Função para mostrar seções
+        function mostrarSecao(secao) {
+            document.querySelectorAll('.secao').forEach(s => s.style.display = 'none');
+            document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}s`).style.display = 'block';
+        }
+
+        // Carregar pedidos
+        async function carregarPedidos() {
+            try {
+                const resposta = await fetch('/pedidos', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const pedidos = await resposta.json();
+                const corpoTabelaPedidos = document.getElementById('corpoTabelaPedidos');
+
+                corpoTabelaPedidos.innerHTML = pedidos.map(pedido => `
+                    <tr>
+                        <td>${pedido._id}</td>
+                        <td>${new Date(pedido.dataPedido).toLocaleDateString()}</td>
+                        <td>R$ ${pedido.valorTotal.toFixed(2)}</td>
+                        <td>${pedido.status}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="mostrarDetalhesPedido('${pedido._id}')">
+                                Detalhes
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar pedidos:', erro);
+            }
+        }
+
+        // Mostrar detalhes do pedido
+        async function mostrarDetalhesPedido(pedidoId) {
+            try {
+                const resposta = await fetch(`/pedidos/${pedidoId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const pedido = await resposta.json();
+                const corpoDetalhesPedido = document.getElementById('corpoDetalhesPedido');
+
+                corpoDetalhesPedido.innerHTML = `
+                    <h5>Pedido #${pedido._id}</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Quantidade</th>
+                                <th>Preço</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pedido.produtos.map(item => `
+                                <tr>
+                                    <td>${item.produto.nome}</td>
+                                    <td>${item.quantidade}</td>
+                                    <td>R$ ${item.precoUnitario.toFixed(2)}</td>
+                                    <td>R$ ${(item.quantidade * item.precoUnitario).toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="text-end">
+                        <strong>Total: R$ ${pedido.valorTotal.toFixed(2)}</strong>
+                    </div>
+                `;
+
+                new bootstrap.Modal(document.getElementById('detalhesPedidoModal')).show();
+            } catch (erro) {
+                console.error('Erro ao carregar detalhes do pedido:', erro);
+            }
+        }
+
+        // Atualizar perfil
+        document.getElementById('formPerfil').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('nomePerfil').value;
+            
+            try {
+                const resposta = await fetch('/usuarios/perfil', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ nome })
+                });
+
+                if (resposta.ok) {
+                    alert('Perfil atualizado com sucesso!');
+                    usuario.nome = nome;
+                    localStorage.setItem('usuario', JSON.stringify(usuario));
+                    document.getElementById('nomeCliente').textContent = nome;
+                } else {
+                    const erro = await resposta.json();
+                    alert(`Erro: ${erro.mensagem}`);
+                }
+            } catch (erro) {
+                console.error('Erro ao atualizar perfil:', erro);
+                alert('Erro ao atualizar perfil. Tente novamente.');
+            }
+        });
+
+        // Sair
+        document.getElementById('btnSair').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            window.location.href = '/loja.html';
+        });
+
+        // Inicializar
+        carregarPedidos();
+    </script>
+</body>
+</html>

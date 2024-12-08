@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Mercadinho Dia Feliz</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="assets/css/styles.css" rel="stylesheet">
+    
+    <!-- Font Awesome para ícones -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <div class="container">
+            <a class="navbar-brand text-white" href="index.html">
+                <i class="fas fa-store"></i> Mercadinho Dia Feliz
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="estoque.html">
+                            <i class="fas fa-boxes"></i> Estoque
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="clientes.html">
+                            <i class="fas fa-users"></i> Clientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="pedidos.html">
+                            <i class="fas fa-shopping-cart"></i> Pedidos
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-white" href="produtos.html">
+                            <i class="fas fa-tags"></i> Produtos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo de Produtos -->
+    <div class="container mt-4">
+        <h1 class="mb-4">Gerenciamento de Produtos</h1>
+        
+        <!-- Formulário de Adicionar/Editar Produto -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Adicionar/Editar Produto</h5>
+            </div>
+            <div class="card-body">
+                <form id="produtoForm">
+                    <input type="hidden" id="produtoId">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nome" class="form-label">Nome do Produto</label>
+                            <input type="text" class="form-control" id="nome" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <input type="text" class="form-control" id="categoria" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="preco" class="form-label">Preço</label>
+                            <input type="number" step="0.01" class="form-control" id="preco" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="quantidade" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="quantidade" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="imagem" class="form-label">URL da Imagem</label>
+                            <input type="url" class="form-control" id="imagem">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricao" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar Produto</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabela de Produtos -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Lista de Produtos</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped" id="tabelaProdutos">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Quantidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabelaProdutos">
+                        <!-- Produtos serão carregados dinamicamente aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS e Dependências -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script de Produtos -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const produtoForm = document.getElementById('produtoForm');
+            const corpoTabelaProdutos = document.getElementById('corpoTabelaProdutos');
+
+            // Carregar produtos
+            async function carregarProdutos() {
+                try {
+                    const resposta = await fetch('/produtos');
+                    const produtos = await resposta.json();
+                    
+                    corpoTabelaProdutos.innerHTML = '';
+                    produtos.forEach(produto => {
+                        const linha = document.createElement('tr');
+                        linha.innerHTML = `
+                            <td>${produto.nome}</td>
+                            <td>${produto.categoria}</td>
+                            <td>R$ ${produto.preco.toFixed(2)}</td>
+                            <td>${produto.quantidade}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning editar" data-id="${produto._id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger excluir" data-id="${produto._id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        corpoTabelaProdutos.appendChild(linha);
+                    });
+
+                    // Adicionar eventos de editar e excluir
+                    document.querySelectorAll('.editar').forEach(botao => {
+                        botao.addEventListener('click', editarProduto);
+                    });
+                    document.querySelectorAll('.excluir').forEach(botao => {
+                        botao.addEventListener('click', excluirProduto);
+                    });
+                } catch (erro) {
+                    console.error('Erro ao carregar produtos:', erro);
+                }
+            }
+
+            // Salvar/Atualizar produto
+            produtoForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('produtoId').value;
+                const produto = {
+                    nome: document.getElementById('nome').value,
+                    categoria: document.getElementById('categoria').value,
+                    preco: parseFloat(document.getElementById('preco').value),
+                    quantidade: parseInt(document.getElementById('quantidade').value),
+                    descricao: document.getElementById('descricao').value,
+                    imagem: document.getElementById('imagem').value
+                };
+
+                try {
+                    const url = id ? `/produtos/${id}` : '/produtos';
+                    const metodo = id ? 'PUT' : 'POST';
+                    
+                    const resposta = await fetch(url, {
+                        method: metodo,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(produto)
+                    });
+
+                    if (resposta.ok) {
+                        carregarProdutos();
+                        produtoForm.reset();
+                        document.getElementById('produtoId').value = '';
+                    }
+                } catch (erro) {
+                    console.error('Erro ao salvar produto:', erro);
+                }
+            });
+
+            // Editar produto
+            function editarProduto(e) {
+                const id = e.currentTarget.dataset.id;
+                fetch(`/produtos/${id}`)
+                    .then(resposta => resposta.json())
+                    .then(produto => {
+                        document.getElementById('produtoId').value = produto._id;
+                        document.getElementById('nome').value = produto.nome;
+                        document.getElementById('categoria').value = produto.categoria;
+                        document.getElementById('preco').value = produto.preco;
+                        document.getElementById('quantidade').value = produto.quantidade;
+                        document.getElementById('descricao').value = produto.descricao;
+                        document.getElementById('imagem').value = produto.imagem;
+                    });
+            }
+
+            // Excluir produto
+            function excluirProduto(e) {
+                const id = e.currentTarget.dataset.id;
+                if (confirm('Tem certeza que deseja excluir este produto?')) {
+                    fetch(`/produtos/${id}`, { method: 'DELETE' })
+                        .then(resposta => {
+                            if (resposta.ok) {
+                                carregarProdutos();
+                            }
+                        });
+                }
+            }
+
+            // Carregar produtos ao iniciar
+            carregarProdutos();
+        });
+    </script>
+</body>
+</html>

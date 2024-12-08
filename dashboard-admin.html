@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Mercadinho Dia Feliz</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #28a745;
+            color: white;
+        }
+        .dashboard-card {
+            transition: transform 0.3s;
+        }
+        .dashboard-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 sidebar p-0">
+                <div class="p-4">
+                    <h3 class="text-center mb-4">
+                        <i class="fas fa-user-shield"></i> Painel Admin
+                    </h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#produtos" onclick="mostrarSecao('produtos')">
+                                <i class="fas fa-box"></i> Produtos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#pedidos" onclick="mostrarSecao('pedidos')">
+                                <i class="fas fa-shopping-cart"></i> Pedidos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#usuarios" onclick="mostrarSecao('usuarios')">
+                                <i class="fas fa-users"></i> Usuários
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-white" href="#" id="btnSair">
+                                <i class="fas fa-sign-out-alt"></i> Sair
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Conteúdo Principal -->
+            <div class="col-md-9 p-4">
+                <div id="secaoProdutos" class="secao">
+                    <h2>Gerenciar Produtos</h2>
+                    <div class="row" id="listaProdutos">
+                        <!-- Produtos serão carregados aqui -->
+                    </div>
+                    <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#novoProdutoModal">
+                        <i class="fas fa-plus"></i> Novo Produto
+                    </button>
+                </div>
+
+                <div id="secaoPedidos" class="secao" style="display:none;">
+                    <h2>Pedidos</h2>
+                    <table class="table" id="tabelaPedidos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaPedidos">
+                            <!-- Pedidos serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="secaoUsuarios" class="secao" style="display:none;">
+                    <h2>Usuários</h2>
+                    <table class="table" id="tabelaUsuarios">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaUsuarios">
+                            <!-- Usuários serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Produto -->
+    <div class="modal fade" id="novoProdutoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novo Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formNovoProduto">
+                        <div class="mb-3">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Categoria</label>
+                            <select class="form-select" required>
+                                <option>Grãos</option>
+                                <option>Óleos</option>
+                                <option>Bebidas</option>
+                                <option>Doces</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Preço</label>
+                            <input type="number" step="0.01" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Verificar autenticação
+        if (!localStorage.getItem('token')) {
+            window.location.href = '/loja.html';
+        }
+
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (usuario.tipo !== 'admin') {
+            window.location.href = '/loja.html';
+        }
+
+        // Função para mostrar seções
+        function mostrarSecao(secao) {
+            document.querySelectorAll('.secao').forEach(s => s.style.display = 'none');
+            document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}s`).style.display = 'block';
+        }
+
+        // Carregar produtos
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch('/produtos', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const produtos = await resposta.json();
+                const listaProdutos = document.getElementById('listaProdutos');
+
+                listaProdutos.innerHTML = produtos.map(produto => `
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="${produto.imagem}" class="card-img-top" alt="${produto.nome}">
+                            <div class="card-body">
+                                <h5 class="card-title">${produto.nome}</h5>
+                                <p class="card-text">R$ ${produto.preco.toFixed(2)}</p>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-sm btn-warning">Editar</button>
+                                    <button class="btn btn-sm btn-danger">Excluir</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar produtos:', erro);
+            }
+        }
+
+        // Carregar pedidos
+        async function carregarPedidos() {
+            try {
+                const resposta = await fetch('/pedidos', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const pedidos = await resposta.json();
+                const corpoTabelaPedidos = document.getElementById('corpoTabelaPedidos');
+
+                corpoTabelaPedidos.innerHTML = pedidos.map(pedido => `
+                    <tr>
+                        <td>${pedido._id}</td>
+                        <td>${pedido.usuario.nome}</td>
+                        <td>R$ ${pedido.valorTotal.toFixed(2)}</td>
+                        <td>${pedido.status}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info">Detalhes</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar pedidos:', erro);
+            }
+        }
+
+        // Sair
+        document.getElementById('btnSair').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            window.location.href = '/loja.html';
+        });
+
+        // Inicializar
+        carregarProdutos();
+        carregarPedidos();
+    </script>
+</body>
+</html>
