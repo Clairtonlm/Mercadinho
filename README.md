@@ -1,81 +1,64 @@
-# Mercadinho Dia Feliz 🛒
+# 🛒 Mercadinho Dia Feliz
 
-## 📝 Descrição
-Mercadinho Dia Feliz é uma plataforma de e-commerce completa para mercados locais, oferecendo uma experiência de compra simples, intuitiva e moderna.
+## Descrição do Projeto
+Plataforma de e-commerce para mercado local, oferecendo uma experiência de compra online intuitiva e moderna.
 
-## 🚀 Funcionalidades
-- 👤 Autenticação de usuários (cliente e admin)
-- 🛍️ Catálogo de produtos
-- 🏷️ Categorização de produtos
-- 🛒 Carrinho de compras
-- 📊 Painel administrativo
-- 🔐 Gerenciamento de usuários
-
-## 🛠️ Tecnologias Utilizadas
-- **Backend**: Node.js, Express.js
-- **Banco de Dados**: MongoDB Atlas
-- **Frontend**: HTML5, Bootstrap 5, Vanilla JavaScript
-- **Autenticação**: JWT (JSON Web Tokens)
-- **Bibliotecas**: 
-  * bcryptjs (hashing de senhas)
-  * mongoose (ODM)
-  * dotenv (gerenciamento de ambiente)
+## 🚀 Tecnologias Utilizadas
+- **Frontend**: HTML5, Bootstrap 5, JavaScript
+- **Backend**: Node.js, Express
+- **Banco de Dados**: PostgreSQL
+- **Autenticação**: JWT
+- **ORM**: Sequelize
 
 ## 📦 Pré-requisitos
 - Node.js (v14 ou superior)
-- MongoDB Atlas
+- PostgreSQL
 - npm ou yarn
 
 ## 🔧 Instalação
 
-1. Clone o repositório
+### Clonar o Repositório
 ```bash
 git clone https://github.com/seu-usuario/mercadinho-dia-feliz.git
 cd mercadinho-dia-feliz
 ```
 
-2. Instale as dependências
+### Configurar Backend
 ```bash
+cd backend
+cp .env.example .env
 npm install
 ```
 
-3. Configure as variáveis de ambiente
-- Crie um arquivo `.env` na raiz do projeto
-- Adicione suas configurações:
-```
-PORT=3000
-MONGODB_URI=sua_uri_mongodb
-JWT_SECRET=sua_chave_secreta
-```
+### Configurar Banco de Dados
+1. Crie um banco de dados PostgreSQL chamado `mercadinho`
+2. Atualize as credenciais no arquivo `.env`
 
-4. População inicial do banco de dados
+### Iniciar Servidor
 ```bash
-npm run populate-db
+npm run dev  # Modo de desenvolvimento
+npm start    # Modo produção
 ```
 
-5. Inicie o servidor
-```bash
-npm start
-```
+## 🔐 Variáveis de Ambiente
+Configure no arquivo `.env`:
+- `PORT`: Porta do servidor
+- `DB_HOST`: Endereço do banco de dados
+- `DB_NAME`: Nome do banco
+- `DB_USER`: Usuário do banco
+- `DB_PASS`: Senha do banco
+- `JWT_SECRET`: Chave secreta para tokens
 
-## 🔐 Credenciais de Teste
-- **Admin**:
-  - Email: admin@mercadinho.com
-  - Senha: password123
-
-- **Cliente**:
-  - Email: cliente@mercadinho.com
-  - Senha: password123
-
-## 🌐 Rotas Principais
-- `/`: Página inicial de vendas
-- `/dashboard-admin.html`: Painel do administrador
-- `/dashboard-cliente.html`: Painel do cliente
+## 🌟 Funcionalidades
+- Cadastro e Login de Usuários
+- Catálogo de Produtos
+- Carrinho de Compras
+- Painel Administrativo
 
 ## 🤝 Contribuição
 1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas alterações (`git commit -m 'Adiciona nova funcionalidade'`)
+2. Crie uma branch (`git checkout -b feature/nova-funcionalidade`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
 4. Push para a branch (`git push origin feature/nova-funcionalidade`)
 5. Abra um Pull Request
 
@@ -83,7 +66,6 @@ npm start
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 ## 📞 Contato
-Clairton Lima - [Seu LinkedIn ou Email]
+Clairton Lima - [Seu Email]
 
-## 🚧 Status do Projeto
-🟢 Em desenvolvimento ativo
+Feito com ❤️ para a comunidade de desenvolvimento

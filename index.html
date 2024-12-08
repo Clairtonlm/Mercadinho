@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercadinho Dia Feliz - Seu Supermercado Online</title>
+    <title>Mercadinho Dia Feliz</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,90 +11,166 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     
-    <!-- Custom CSS -->
+    <!-- Sweet Alert 2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
     <style>
-        :root {
-            --primary-color: #28a745;
-            --secondary-color: #6c757d;
-        }
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f4f4f4;
         }
-        .produto-card {
-            transition: transform 0.3s;
+        .sidebar {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 30px;
         }
-        .produto-card:hover {
-            transform: scale(1.05);
+        .auth-section {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
         }
-        .carrinho-badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
+        .category-link {
+            cursor: pointer;
+            text-decoration: none;
+            color: #000;
+        }
+        .category-link:hover {
+            color: #28a745;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-shopping-cart"></i> Mercadinho Dia Feliz
-            </a>
-            <div class="d-flex align-items-center">
-                <button class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-                    <i class="fas fa-user"></i> Login
-                </button>
-                <button class="btn btn-success position-relative" id="btnCarrinho">
-                    <i class="fas fa-shopping-cart"></i> Carrinho
-                    <span class="badge bg-danger carrinho-badge" id="carrinhoContador">0</span>
-                </button>
+            <a class="navbar-brand" href="#">Mercadinho Dia Feliz</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <i class="fas fa-user-plus"></i> Cadastrar
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Vitrine de Produtos -->
+    <!-- Conteúdo Principal -->
     <div class="container mt-4">
         <div class="row">
+            <!-- Sidebar de Categorias -->
             <div class="col-md-3">
-                <div class="card mb-4">
+                <div class="card mb-4 sidebar">
                     <div class="card-header bg-success text-white">
-                        <i class="fas fa-filter"></i> Categorias
+                        <i class="fas fa-list"></i> Categorias
                     </div>
                     <ul class="list-group list-group-flush" id="listaCategorias">
-                        <li class="list-group-item">Todos os Produtos</li>
-                        <li class="list-group-item">Grãos</li>
-                        <li class="list-group-item">Óleos</li>
-                        <li class="list-group-item">Bebidas</li>
-                        <li class="list-group-item">Doces</li>
+                        <li class="list-group-item list-group-item-action">
+                            <a class="category-link" href="#frutas">Frutas</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a class="category-link" href="#legumes">Legumes</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a class="category-link" href="#laticinios">Laticínios</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a class="category-link" href="#carnes">Carnes</a>
+                        </li>
                     </ul>
                 </div>
             </div>
+
+            <!-- Área de Produtos -->
             <div class="col-md-9">
-                <div class="row" id="vitrineProdutos">
-                    <!-- Produtos serão carregados dinamicamente aqui -->
+                <h2 class="text-center mb-4">Produtos em Destaque</h2>
+                <div class="row row-cols-1 row-cols-md-3 g-4" id="produtosDestaque">
+                    <!-- Produto 1 -->
+                    <div class="col" id="frutas">
+                        <div class="card h-100">
+                            <img src="https://via.placeholder.com/250" class="card-img-top" alt="Banana">
+                            <div class="card-body">
+                                <h5 class="card-title">Banana</h5>
+                                <p class="card-text">Bananas frescas e saborosas.</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 text-success mb-0">R$ 2.50</span>
+                                    <button class="btn btn-sm btn-outline-success" onclick="adicionarAoCarrinho('Banana', 1)">
+                                        <i class="fas fa-cart-plus"></i> Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Produto 2 -->
+                    <div class="col" id="legumes">
+                        <div class="card h-100">
+                            <img src="https://via.placeholder.com/250" class="card-img-top" alt="Maçã">
+                            <div class="card-body">
+                                <h5 class="card-title">Maçã</h5>
+                                <p class="card-text">Maçãs crocantes e suculentas.</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 text-success mb-0">R$ 3.00</span>
+                                    <button class="btn btn-sm btn-outline-success" onclick="adicionarAoCarrinho('Maçã', 1)">
+                                        <i class="fas fa-cart-plus"></i> Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Produto 3 -->
+                    <div class="col" id="laticinios">
+                        <div class="card h-100">
+                            <img src="https://via.placeholder.com/250" class="card-img-top" alt="Laranja">
+                            <div class="card-body">
+                                <h5 class="card-title">Laranja</h5>
+                                <p class="card-text">Laranjas doces e refrescantes.</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 text-success mb-0">R$ 1.50</span>
+                                    <button class="btn btn-sm btn-outline-success" onclick="adicionarAoCarrinho('Laranja', 1)">
+                                        <i class="fas fa-cart-plus"></i> Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal de Login -->
-    <div class="modal fade" id="loginModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Login</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title">Fazer Login</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formLogin">
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" required>
+                            <input type="email" id="emailLogin" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Senha</label>
-                            <input type="password" class="form-control" required>
+                            <input type="password" id="senhaLogin" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-success w-100">Entrar</button>
                     </form>
@@ -103,183 +179,124 @@
         </div>
     </div>
 
-    <!-- Modal de Carrinho -->
-    <div class="modal fade" id="carrinhoModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+    <!-- Modal de Cadastro -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Carrinho de Compras</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title">Criar Conta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="carrinhoConteudo">
-                    <!-- Itens do carrinho serão carregados aqui -->
-                </div>
-                <div class="modal-footer">
-                    <div class="d-flex justify-content-between w-100">
-                        <span id="carrinhoTotal">Total: R$ 0,00</span>
-                        <button class="btn btn-success" id="btnFinalizarCompra">Finalizar Compra</button>
-                    </div>
+                <div class="modal-body">
+                    <form id="formRegister">
+                        <div class="mb-3">
+                            <label class="form-label">Nome</label>
+                            <input type="text" id="nomeRegister" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="emailRegister" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Senha</label>
+                            <input type="password" id="senhaRegister" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Cadastrar</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS e Dependências -->
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="mb-0"> 2023 Mercadinho Dia Feliz. Todos os direitos reservados.</p>
+            <p class="mb-0"><a href="#" class="text-white">Política de Privacidade</a> | <a href="#" class="text-white">Termos de Serviço</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Script personalizado -->
+    <!-- Sweet Alert 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        // Estado do carrinho
-        let carrinho = [];
-        const carrinhoContador = document.getElementById('carrinhoContador');
-        const carrinhoConteudo = document.getElementById('carrinhoConteudo');
-        const carrinhoTotal = document.getElementById('carrinhoTotal');
-
-        // Função para carregar produtos
-        async function carregarProdutos() {
-            try {
-                const resposta = await fetch('/produtos/vitrine');
-                const produtos = await resposta.json();
-                const vitrine = document.getElementById('vitrineProdutos');
-                
-                vitrine.innerHTML = produtos.map(produto => `
-                    <div class="col-md-4 mb-4">
-                        <div class="card produto-card">
-                            <img src="${produto.imagem}" class="card-img-top" alt="${produto.nome}">
-                            <div class="card-body">
-                                <h5 class="card-title">${produto.nome}</h5>
-                                <p class="card-text">${produto.descricao}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="h5 text-success">R$ ${produto.preco.toFixed(2)}</span>
-                                    <button class="btn btn-sm btn-outline-success" onclick="adicionarAoCarrinho(${JSON.stringify(produto).replace(/"/g, '&quot;')})">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (erro) {
-                console.error('Erro ao carregar produtos:', erro);
-            }
+        // Função para adicionar ao carrinho
+        function adicionarAoCarrinho(nomeProduto, quantidade) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Produto Adicionado',
+                text: `${quantidade} ${nomeProduto}(s) adicionado(s) ao carrinho`,
+                showConfirmButton: false,
+                timer: 1500
+            });
         }
-
-        // Função para adicionar item ao carrinho
-        function adicionarAoCarrinho(produto) {
-            const itemExistente = carrinho.find(item => item._id === produto._id);
-            
-            if (itemExistente) {
-                itemExistente.quantidade++;
-            } else {
-                carrinho.push({ ...produto, quantidade: 1 });
-            }
-
-            atualizarCarrinho();
-        }
-
-        // Função para atualizar carrinho
-        function atualizarCarrinho() {
-            carrinhoContador.textContent = carrinho.reduce((total, item) => total + item.quantidade, 0);
-            
-            const total = carrinho.reduce((soma, item) => soma + (item.preco * item.quantidade), 0);
-            carrinhoTotal.textContent = `Total: R$ ${total.toFixed(2)}`;
-
-            carrinhoConteudo.innerHTML = carrinho.map(item => `
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <img src="${item.imagem}" style="width: 50px; height: 50px; object-fit: cover;" class="me-2">
-                    <span>${item.nome}</span>
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="alterarQuantidade('${item._id}', -1)">-</button>
-                        <span class="btn btn-sm btn-outline-secondary">${item.quantidade}</span>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="alterarQuantidade('${item._id}', 1)">+</button>
-                    </div>
-                    <span>R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
-                </div>
-            `).join('');
-        }
-
-        // Função para alterar quantidade
-        function alterarQuantidade(id, delta) {
-            const item = carrinho.find(item => item._id === id);
-            
-            if (item) {
-                item.quantidade += delta;
-                
-                if (item.quantidade <= 0) {
-                    carrinho = carrinho.filter(i => i._id !== id);
-                }
-                
-                atualizarCarrinho();
-            }
-        }
-
-        // Evento para finalizar compra
-        document.getElementById('btnFinalizarCompra').addEventListener('click', async () => {
-            try {
-                const resposta = await fetch('/pedidos', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({
-                        produtos: carrinho.map(item => ({
-                            produto: item._id,
-                            quantidade: item.quantidade
-                        }))
-                    })
-                });
-
-                if (resposta.ok) {
-                    alert('Pedido realizado com sucesso!');
-                    carrinho = [];
-                    atualizarCarrinho();
-                } else {
-                    const erro = await resposta.json();
-                    alert(`Erro: ${erro.mensagem}`);
-                }
-            } catch (erro) {
-                console.error('Erro ao finalizar compra:', erro);
-                alert('Erro ao finalizar compra. Tente novamente.');
-            }
-        });
 
         // Evento de login
-        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = e.target.querySelector('input[type="email"]').value;
-            const senha = e.target.querySelector('input[type="password"]').value;
+            const email = document.getElementById('emailLogin').value;
+            const senha = document.getElementById('senhaLogin').value;
 
-            try {
-                const resposta = await fetch('/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, senha })
+            // Credenciais de exemplo
+            if (email === 'admin@mercadinho.com' && senha === 'admin123') {
+                // Login de admin
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login de Administrador',
+                    text: 'Redirecionando para o painel administrativo...',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = 'dashboard-admin.html';
                 });
-
-                const dados = await resposta.json();
-
-                if (resposta.ok) {
-                    localStorage.setItem('token', dados.token);
-                    localStorage.setItem('usuario', JSON.stringify(dados.usuario));
-                    alert(`Bem-vindo, ${dados.usuario.nome}!`);
-                    document.querySelector('[data-bs-dismiss="modal"]').click();
-                } else {
-                    alert(dados.mensagem);
-                }
-            } catch (erro) {
-                console.error('Erro no login:', erro);
-                alert('Erro no login. Tente novamente.');
+            } else if (email === 'cliente@mercadinho.com' && senha === 'cliente123') {
+                // Login de cliente
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Efetuado',
+                    text: 'Redirecionando para o painel do cliente...',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = 'dashboard-cliente.html';
+                });
+            } else {
+                // Credenciais inválidas
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de Login',
+                    text: 'Email ou senha inválidos'
+                });
             }
         });
 
-        // Carregar produtos ao iniciar
-        carregarProdutos();
+        // Evento de cadastro
+        document.getElementById('formRegister').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nomeRegister').value;
+            const email = document.getElementById('emailRegister').value;
+            const senha = document.getElementById('senhaRegister').value;
 
-        // Configurar modal do carrinho
-        const btnCarrinho = document.getElementById('btnCarrinho');
-        const carrinhoModal = new bootstrap.Modal(document.getElementById('carrinhoModal'));
-        btnCarrinho.addEventListener('click', () => carrinhoModal.show());
+            // Validação básica
+            if (nome && email && senha) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cadastro Realizado',
+                    text: 'Seu cadastro foi efetuado com sucesso!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de Cadastro',
+                    text: 'Por favor, preencha todos os campos'
+                });
+            }
+        });
     </script>
 </body>
 </html>
